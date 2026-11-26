@@ -12,30 +12,43 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       min-height: 100vh;
+      margin: 0;
       background:
         radial-gradient(circle at 85% 15%, #f1e9d9 0, transparent 35%),
         linear-gradient(135deg, #ffffff, #f7f8fa);
       display: flex;
       flex-direction: column;
+      font-family: Arial, sans-serif;
     }
 
     .register-header {
       padding: 22px 5%;
       border-bottom: 1px solid #e7eaf0;
-      background: rgba(255,255,255,.95);
+      background: #ffffff;
     }
 
     .register-header .logo {
       font-size: 1.8rem;
+      text-decoration: none;
+      font-weight: 800;
+      color: #101b2d;
+    }
+
+    .register-header .logo span {
+      color: #c9a96e;
     }
 
     .register-main {
       flex: 1;
       display: grid;
       place-items: center;
-      padding: 50px 20px;
+      padding: 45px 18px;
     }
 
     .register-card {
@@ -67,11 +80,13 @@
     }
 
     .register-brand h1 {
+      color: #101b2d;
       font-size: 2rem;
       margin-bottom: 9px;
     }
 
     .register-brand p {
+      color: #748094;
       font-size: .93rem;
     }
 
@@ -91,6 +106,7 @@
       outline: none;
       color: #101b2d;
       background: #fcfcfd;
+      font-size: 15px;
     }
 
     .register-form input:focus {
@@ -115,7 +131,6 @@
       background: transparent;
       color: #a8874c;
       font-weight: 700;
-      font-size: .8rem;
       cursor: pointer;
     }
 
@@ -160,13 +175,11 @@
 
     .register-submit:hover {
       background: #1b2b43;
-      transform: translateY(-2px);
     }
 
     .register-submit:disabled {
       opacity: .65;
       cursor: not-allowed;
-      transform: none;
     }
 
     .register-status {
@@ -175,6 +188,7 @@
       font-size: .85rem;
       text-align: center;
       line-height: 1.5;
+      overflow-wrap: anywhere;
     }
 
     .register-divider {
@@ -197,6 +211,7 @@
     .login-text {
       text-align: center;
       font-size: .9rem;
+      color: #748094;
     }
 
     .login-text a,
@@ -211,6 +226,7 @@
       margin-top: 24px;
       color: #748094;
       font-size: .85rem;
+      text-decoration: none;
     }
 
     .register-footer {
@@ -218,6 +234,7 @@
       padding: 22px;
       border-top: 1px solid #e7eaf0;
       font-size: .8rem;
+      color: #748094;
     }
 
     @media(max-width: 480px) {
@@ -246,16 +263,13 @@
 
       <div class="register-brand">
         <div class="brand-mark">N</div>
-
         <h1>Create Account</h1>
-
         <p>Join NEXORA and create your business account.</p>
       </div>
 
       <form class="register-form" id="registerForm">
 
         <label for="fullName">Full Name</label>
-
         <input
           type="text"
           id="fullName"
@@ -266,7 +280,6 @@
         >
 
         <label for="registerEmail">Email Address</label>
-
         <input
           type="email"
           id="registerEmail"
@@ -276,7 +289,6 @@
         >
 
         <label for="phoneNumber">Phone Number</label>
-
         <input
           type="tel"
           id="phoneNumber"
@@ -289,7 +301,6 @@
         <label for="registerPassword">Create Password</label>
 
         <div class="password-wrap">
-
           <input
             type="password"
             id="registerPassword"
@@ -304,7 +315,6 @@
             class="show-password"
             data-toggle="registerPassword"
           >Show</button>
-
         </div>
 
         <small class="password-help">
@@ -314,7 +324,6 @@
         <label for="confirmPassword">Confirm Password</label>
 
         <div class="password-wrap">
-
           <input
             type="password"
             id="confirmPassword"
@@ -329,11 +338,9 @@
             class="show-password"
             data-toggle="confirmPassword"
           >Show</button>
-
         </div>
 
         <div class="terms-row">
-
           <input
             type="checkbox"
             id="acceptTerms"
@@ -346,7 +353,6 @@
             and
             <a href="privacy.html">Privacy Policy</a>.
           </label>
-
         </div>
 
         <button
@@ -360,8 +366,8 @@
         <p
           class="register-status"
           id="registerStatus"
-          aria-live="polite"
           role="status"
+          aria-live="polite"
         ></p>
 
       </form>
@@ -378,7 +384,6 @@
       </a>
 
     </section>
-
   </main>
 
   <footer class="register-footer">
@@ -397,47 +402,38 @@
       updateProfile
     } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-    const registerForm = document.getElementById("registerForm");
-
-    const fullName = document.getElementById("fullName");
+    const form = document.getElementById("registerForm");
+    const nameInput = document.getElementById("fullName");
     const emailInput = document.getElementById("registerEmail");
     const phoneInput = document.getElementById("phoneNumber");
     const passwordInput = document.getElementById("registerPassword");
     const confirmInput = document.getElementById("confirmPassword");
 
-    const acceptTerms = document.getElementById("acceptTerms");
-    const registerButton = document.getElementById("registerButton");
-    const registerStatus = document.getElementById("registerStatus");
+    const termsInput = document.getElementById("acceptTerms");
+    const button = document.getElementById("registerButton");
+    const status = document.getElementById("registerStatus");
 
     document.getElementById("currentYear").textContent =
       new Date().getFullYear();
 
-    // Show / Hide Password
-    document.querySelectorAll("[data-toggle]").forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        const input = document.getElementById(
-          button.dataset.toggle
-        );
-
-        const hidden = input.type === "password";
-
-        input.type = hidden ? "text" : "password";
-        button.textContent = hidden ? "Hide" : "Show";
-
-      });
-
-    });
-
-    function showMessage(message, color) {
-      registerStatus.textContent = message;
-      registerStatus.style.color = color;
+    function showMessage(message, color = "#c0392b") {
+      status.textContent = message;
+      status.style.color = color;
     }
 
-    // Firebase Error Messages
-    function getErrorMessage(errorCode) {
+    // Show / Hide password
+    document.querySelectorAll("[data-toggle]").forEach(toggle => {
+      toggle.addEventListener("click", () => {
+        const input = document.getElementById(toggle.dataset.toggle);
+        const isHidden = input.type === "password";
 
+        input.type = isHidden ? "text" : "password";
+        toggle.textContent = isHidden ? "Hide" : "Show";
+      });
+    });
+
+    // Firebase error messages
+    function getErrorMessage(code) {
       const messages = {
         "auth/email-already-in-use":
           "This email already has an account. Please sign in.",
@@ -449,114 +445,110 @@
           "Your password is too weak. Use at least 8 characters.",
 
         "auth/operation-not-allowed":
-          "Email registration is not enabled in Firebase.",
+          "Email/Password registration is disabled in Firebase.",
 
         "auth/network-request-failed":
           "Network error. Please check your internet connection.",
 
         "auth/too-many-requests":
-          "Too many attempts. Please try again later."
+          "Too many attempts. Please try again later.",
+
+        "auth/unauthorized-domain":
+          "This website domain is not authorized in Firebase.",
+
+        "auth/invalid-api-key":
+          "Firebase API key is invalid. Check firebase.js.",
+
+        "auth/configuration-not-found":
+          "Firebase Authentication configuration is missing."
       };
 
-      return messages[errorCode] ||
-        "Registration failed. Please try again.";
-
+      return messages[code] ||
+        "Registration failed. Firebase error: " + (code || "unknown");
     }
 
-    // Firebase Registration
-    registerForm.addEventListener("submit", async (event) => {
+    // Create Firebase account
+    form.addEventListener("submit", async (event) => {
 
       event.preventDefault();
 
-      const name = fullName.value.trim();
-      const email = emailInput.value.trim();
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
       const phone = phoneInput.value.trim();
       const password = passwordInput.value;
       const confirmPassword = confirmInput.value;
 
       if (name.length < 2) {
-        showMessage("Please enter your full name.", "#c0392b");
+        showMessage("Please enter your full name.");
         return;
       }
 
       if (!phone) {
-        showMessage("Please enter your phone number.", "#c0392b");
+        showMessage("Please enter your phone number.");
         return;
       }
 
       if (password.length < 8) {
-        showMessage(
-          "Password must contain at least 8 characters.",
-          "#c0392b"
-        );
+        showMessage("Password must contain at least 8 characters.");
         return;
       }
 
       if (password !== confirmPassword) {
-        showMessage(
-          "Passwords do not match.",
-          "#c0392b"
-        );
+        showMessage("Passwords do not match.");
         return;
       }
 
-      if (!acceptTerms.checked) {
-        showMessage(
-          "Please accept the Terms & Conditions.",
-          "#c0392b"
-        );
+      if (!termsInput.checked) {
+        showMessage("Please accept the Terms & Conditions.");
         return;
       }
 
-      registerButton.disabled = true;
-      registerButton.textContent = "Creating Account...";
+      button.disabled = true;
+      button.textContent = "Creating Account...";
 
       showMessage(
-        "Please wait while your account is created...",
+        "Creating your account. Please wait...",
         "#748094"
       );
 
       try {
 
-        const userCredential =
-          await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
+        const result = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
 
-        // Save display name in Firebase Authentication profile
-        await updateProfile(userCredential.user, {
-          displayName: name
-        });
+        // Save user's name to Firebase Authentication profile
+        try {
+          await updateProfile(result.user, {
+            displayName: name
+          });
+        } catch (profileError) {
+          console.error("Profile update error:", profileError);
+        }
 
         showMessage(
-          "Account created successfully! You can now sign in.",
+          "Your NEXORA account has been created successfully!",
           "#18864b"
         );
 
-        registerForm.reset();
-
-        // Phone number is collected here but is not yet
-        // saved to Firestore or Firebase phone authentication.
+        form.reset();
 
         setTimeout(() => {
           window.location.href = "login.html";
-        }, 1800);
+        }, 2000);
 
       } catch (error) {
 
-        console.error("Registration error:", error.code);
+        console.error("Firebase registration error:", error);
 
-        showMessage(
-          getErrorMessage(error.code),
-          "#c0392b"
-        );
+        showMessage(getErrorMessage(error.code));
 
       } finally {
 
-        registerButton.disabled = false;
-        registerButton.textContent = "Create Account";
+        button.disabled = false;
+        button.textContent = "Create Account";
 
       }
 
