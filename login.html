@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Login | NEXORA Premium</title>
+
+  <meta name="description" content="Securely sign in to your NEXORA business account.">
+
+  <meta name="theme-color" content="#101b2d">
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 85% 15%, #f1e9d9 0, transparent 35%),
+        linear-gradient(135deg, #ffffff, #f7f8fa);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .login-header {
+      padding: 22px 5%;
+      border-bottom: 1px solid #e7eaf0;
+      background: rgba(255,255,255,.95);
+    }
+
+    .login-header .logo {
+      font-size: 1.8rem;
+    }
+
+    .login-main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 55px 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background: #ffffff;
+      padding: 42px;
+      border: 1px solid #e7eaf0;
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(16,27,45,.10);
+    }
+
+    .login-brand {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-brand .brand-mark {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      background: #101b2d;
+      color: #c9a96e;
+      font-size: 1.5rem;
+      font-weight: 900;
+      border-radius: 14px;
+    }
+
+    .login-brand h1 {
+      font-size: 2rem;
+      margin-bottom: 9px;
+    }
+
+    .login-brand p {
+      font-size: .93rem;
+    }
+
+    .login-form label {
+      display: block;
+      margin: 18px 0 7px;
+      color: #101b2d;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    .login-form input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #e7eaf0;
+      border-radius: 8px;
+      outline: none;
+      color: #101b2d;
+      background: #fcfcfd;
+    }
+
+    .login-form input:focus {
+      border-color: #c9a96e;
+      box-shadow: 0 0 0 3px rgba(201,169,110,.12);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap input {
+      padding-right: 75px;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: #a8874c;
+      font-weight: 700;
+      font-size: .8rem;
+    }
+
+    .login-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0 22px;
+      font-size: .82rem;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #748094;
+    }
+
+    .remember input {
+      width: auto;
+      accent-color: #c9a96e;
+    }
+
+    .forgot-link,
+    .register-link {
+      color: #a8874c;
+      font-weight: 700;
+    }
+
+    .login-submit {
+      width: 100%;
+      border: 0;
+      padding: 15px;
+      border-radius: 8px;
+      background: #101b2d;
+      color: #ffffff;
+      font-weight: 700;
+      transition: .3s;
+    }
+
+    .login-submit:hover {
+      background: #1b2b43;
+      transform: translateY(-2px);
+    }
+
+    .login-status {
+      margin-top: 15px;
+      font-size: .85rem;
+      text-align: center;
+      min-height: 22px;
+    }
+
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 25px 0;
+      color: #9aa3b1;
+      font-size: .8rem;
+    }
+
+    .login-divider::before,
+    .login-divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: #e7eaf0;
+    }
+
+    .register-text {
+      text-align: center;
+      font-size: .9rem;
+    }
+
+    .back-home {
+      display: block;
+      text-align: center;
+      margin-top: 25px;
+      color: #748094;
+      font-size: .85rem;
+    }
+
+    .login-footer {
+      text-align: center;
+      padding: 22px;
+      border-top: 1px solid #e7eaf0;
+      font-size: .8rem;
+    }
+
+    @media(max-width: 480px) {
+      .login-card {
+        padding: 30px 22px;
+      }
+
+      .login-brand h1 {
+        font-size: 1.7rem;
+      }
+
+      .login-options {
+        font-size: .76rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="login-header">
+    <a href="index.html" class="logo">
+      NEXORA<span>.</span>
+    </a>
+  </header>
+
+  <main class="login-main">
+
+    <section class="login-card">
+
+      <div class="login-brand">
+        <div class="brand-mark">N</div>
+
+        <h1>Welcome Back</h1>
+
+        <p>Sign in to your NEXORA account.</p>
+      </div>
+
+      <form class="login-form" id="loginForm">
+
+        <label for="loginEmail">Email Address</label>
+
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="Enter your email"
+          autocomplete="email"
+          required
+        >
+
+        <label for="loginPassword">Password</label>
+
+        <div class="password-wrap">
+
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+
+          <button
+            type="button"
+            class="show-password"
+            id="togglePassword"
+          >
+            Show
+          </button>
+
+        </div>
+
+        <div class="login-options">
+
+          <label class="remember">
+            <input type="checkbox" id="rememberMe">
+            Remember me
+          </label>
+
+          <a href="forgot-password.html" class="forgot-link">
+            Forgot Password?
+          </a>
+
+        </div>
+
+        <button type="submit" class="login-submit">
+          Sign In
+        </button>
+
+        <p class="login-status" id="loginStatus" aria-live="polite"></p>
+
+      </form>
+
+      <div class="login-divider">OR</div>
+
+      <p class="register-text">
+        Don't have an account?
+        <a href="register.html" class="register-link">
+          Create Account
+        </a>
+      </p>
+
+      <a href="index.html" class="back-home">
+        ← Back to Homepage
+      </a>
+
+    </section>
+
+  </main>
+
+  <footer class="login-footer">
+    <p>© <span id="currentYear"></span> NEXORA. All rights reserved.</p>
+  </footer>
+
+  <script>
+    "use strict";
+
+    const passwordInput = document.getElementById("loginPassword");
+    const togglePassword = document.getElementById("togglePassword");
+    const loginForm = document.getElementById("loginForm");
+    const loginStatus = document.getElementById("loginStatus");
+
+    togglePassword.addEventListener("click", function () {
+
+      const hidden = passwordInput.type === "password";
+
+      passwordInput.type = hidden ? "text" : "password";
+
+      togglePassword.textContent = hidden ? "Hide" : "Show";
+
+    });
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+    loginForm.addEventListener("submit", function (event) {
+
+      event.preventDefault();
+
+      loginStatus.style.color = "#b06b32";
+
+      loginStatus.textContent =
+        "Login system is not connected yet. Firebase Authentication will be added next.";
+
+    });
+  </script>
+
+</body>
+</html>
