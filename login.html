@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Login | NEXORA Premium</title>
-
   <meta name="description" content="Securely sign in to your NEXORA business account.">
-
   <meta name="theme-color" content="#101b2d">
 
   <link rel="stylesheet" href="style.css">
@@ -29,9 +27,7 @@
       background: rgba(255,255,255,.95);
     }
 
-    .login-header .logo {
-      font-size: 1.8rem;
-    }
+    .login-header .logo { font-size: 1.8rem; }
 
     .login-main {
       flex: 1;
@@ -73,9 +69,7 @@
       margin-bottom: 9px;
     }
 
-    .login-brand p {
-      font-size: .93rem;
-    }
+    .login-brand p { font-size: .93rem; }
 
     .login-form label {
       display: block;
@@ -100,13 +94,9 @@
       box-shadow: 0 0 0 3px rgba(201,169,110,.12);
     }
 
-    .password-wrap {
-      position: relative;
-    }
+    .password-wrap { position: relative; }
 
-    .password-wrap input {
-      padding-right: 75px;
-    }
+    .password-wrap input { padding-right: 75px; }
 
     .show-password {
       position: absolute;
@@ -118,6 +108,7 @@
       color: #a8874c;
       font-weight: 700;
       font-size: .8rem;
+      cursor: pointer;
     }
 
     .login-options {
@@ -155,6 +146,7 @@
       background: #101b2d;
       color: #ffffff;
       font-weight: 700;
+      cursor: pointer;
       transition: .3s;
     }
 
@@ -163,11 +155,18 @@
       transform: translateY(-2px);
     }
 
+    .login-submit:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .login-status {
       margin-top: 15px;
       font-size: .85rem;
       text-align: center;
       min-height: 22px;
+      line-height: 1.5;
     }
 
     .login-divider {
@@ -208,17 +207,9 @@
     }
 
     @media(max-width: 480px) {
-      .login-card {
-        padding: 30px 22px;
-      }
-
-      .login-brand h1 {
-        font-size: 1.7rem;
-      }
-
-      .login-options {
-        font-size: .76rem;
-      }
+      .login-card { padding: 30px 22px; }
+      .login-brand h1 { font-size: 1.7rem; }
+      .login-options { font-size: .76rem; }
     }
   </style>
 </head>
@@ -232,21 +223,17 @@
   </header>
 
   <main class="login-main">
-
     <section class="login-card">
 
       <div class="login-brand">
         <div class="brand-mark">N</div>
-
         <h1>Welcome Back</h1>
-
         <p>Sign in to your NEXORA account.</p>
       </div>
 
       <form class="login-form" id="loginForm">
 
         <label for="loginEmail">Email Address</label>
-
         <input
           type="email"
           id="loginEmail"
@@ -258,7 +245,6 @@
         <label for="loginPassword">Password</label>
 
         <div class="password-wrap">
-
           <input
             type="password"
             id="loginPassword"
@@ -271,10 +257,7 @@
             type="button"
             class="show-password"
             id="togglePassword"
-          >
-            Show
-          </button>
-
+          >Show</button>
         </div>
 
         <div class="login-options">
@@ -290,11 +273,16 @@
 
         </div>
 
-        <button type="submit" class="login-submit">
+        <button type="submit" class="login-submit" id="loginButton">
           Sign In
         </button>
 
-        <p class="login-status" id="loginStatus" aria-live="polite"></p>
+        <p
+          class="login-status"
+          id="loginStatus"
+          aria-live="polite"
+          role="status"
+        ></p>
 
       </form>
 
@@ -312,43 +300,117 @@
       </a>
 
     </section>
-
   </main>
 
   <footer class="login-footer">
     <p>© <span id="currentYear"></span> NEXORA. All rights reserved.</p>
   </footer>
 
-  <script>
-    "use strict";
+  <script type="module">
+    import { auth } from "./firebase.js";
 
+    import {
+      signInWithEmailAndPassword,
+      setPersistence,
+      browserLocalPersistence,
+      browserSessionPersistence
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+    const loginForm = document.getElementById("loginForm");
+    const emailInput = document.getElementById("loginEmail");
     const passwordInput = document.getElementById("loginPassword");
     const togglePassword = document.getElementById("togglePassword");
-    const loginForm = document.getElementById("loginForm");
+    const rememberMe = document.getElementById("rememberMe");
     const loginStatus = document.getElementById("loginStatus");
-
-    togglePassword.addEventListener("click", function () {
-
-      const hidden = passwordInput.type === "password";
-
-      passwordInput.type = hidden ? "text" : "password";
-
-      togglePassword.textContent = hidden ? "Hide" : "Show";
-
-    });
+    const loginButton = document.getElementById("loginButton");
 
     document.getElementById("currentYear").textContent =
       new Date().getFullYear();
 
-    loginForm.addEventListener("submit", function (event) {
+    togglePassword.addEventListener("click", () => {
+      const hidden = passwordInput.type === "password";
 
+      passwordInput.type = hidden ? "text" : "password";
+      togglePassword.textContent = hidden ? "Hide" : "Show";
+    });
+
+    function showMessage(message, color) {
+      loginStatus.textContent = message;
+      loginStatus.style.color = color;
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      loginStatus.style.color = "#b06b32";
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
 
-      loginStatus.textContent =
-        "Login system is not connected yet. Firebase Authentication will be added next.";
+      if (!email || !password) {
+        showMessage("Please enter your email and password.", "#b06b32");
+        return;
+      }
 
+      loginButton.disabled = true;
+      loginButton.textContent = "Signing In...";
+      showMessage("Please wait...", "#748094");
+
+      try {
+        const persistence = rememberMe.checked
+          ? browserLocalPersistence
+          : browserSessionPersistence;
+
+        await setPersistence(auth, persistence);
+
+        const result = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        showMessage(
+          "Login successful! Welcome to NEXORA.",
+          "#18864b"
+        );
+
+        console.log("Authenticated user:", result.user.uid);
+
+        // Dashboard page will be connected after it is created.
+
+      } catch (error) {
+        console.error("Login error:", error.code);
+
+        let message = "Login failed. Please try again.";
+
+        switch (error.code) {
+          case "auth/invalid-credential":
+          case "auth/wrong-password":
+          case "auth/user-not-found":
+            message = "Incorrect email or password.";
+            break;
+
+          case "auth/invalid-email":
+            message = "Please enter a valid email address.";
+            break;
+
+          case "auth/user-disabled":
+            message = "This account has been disabled.";
+            break;
+
+          case "auth/too-many-requests":
+            message = "Too many attempts. Please try again later.";
+            break;
+
+          case "auth/network-request-failed":
+            message = "Network error. Please check your internet.";
+            break;
+        }
+
+        showMessage(message, "#c0392b");
+
+      } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign In";
+      }
     });
   </script>
 
