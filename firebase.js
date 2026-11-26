@@ -1,12 +1,7 @@
 
 /* =========================================
-   NEXORA PREMIUM BUSINESS PLATFORM
-   FILE: firebase.js
-
-   Firebase App
-   Authentication
-   Cloud Firestore
-   Firebase Storage
+   NEXORA BUSINESS WEBSITE
+   FIREBASE CONFIGURATION
 ========================================= */
 
 // Firebase SDK Imports
@@ -24,54 +19,40 @@ import { getStorage }
 from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
 
 
-// =========================================
-// 01. FIREBASE CONFIGURATION
-// =========================================
-
-// Firebase Console থেকে আপনার Web App-এর
-// আসল Configuration এখানে বসাবেন।
+// Firebase Configuration
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAjYGwVfgEAe-wYGwAsa3wwN3_V09FDRXk",
+  authDomain: "nexora-fb9ed.firebaseapp.com",
+  projectId: "nexora-fb9ed",
+  storageBucket: "nexora-fb9ed.firebasestorage.app",
+  messagingSenderId: "1082698782543",
+  appId: "1:1082698782543:web:9ea8ac7e30647b3f25173a",
+  measurementId: "G-Q44VLSD8MT"
 };
 
 
-// =========================================
-// 02. INITIALIZE FIREBASE
-// =========================================
+// Initialize Firebase
 
 const app = initializeApp(firebaseConfig);
 
 
-// =========================================
-// 03. FIREBASE AUTHENTICATION
-// =========================================
+// Firebase Authentication
 
 const auth = getAuth(app);
 
 
-// =========================================
-// 04. CLOUD FIRESTORE DATABASE
-// =========================================
+// Cloud Firestore
 
 const db = getFirestore(app);
 
 
-// =========================================
-// 05. FIREBASE STORAGE
-// =========================================
+// Firebase Storage
 
 const storage = getStorage(app);
 
 
-// =========================================
-// 06. EXPORT FIREBASE SERVICES
-// =========================================
+// Export Services
 
 export {
   app,
