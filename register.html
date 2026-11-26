@@ -1,0 +1,464 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Create Account | NEXORA Premium</title>
+
+  <meta name="description" content="Create your NEXORA Premium business account.">
+
+  <meta name="theme-color" content="#101b2d">
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 85% 10%, #f1e9d9 0, transparent 35%),
+        linear-gradient(135deg, #ffffff, #f7f8fa);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .register-header {
+      padding: 20px 5%;
+      background: rgba(255,255,255,.96);
+      border-bottom: 1px solid #e7eaf0;
+    }
+
+    .register-header .logo {
+      font-size: 1.8rem;
+    }
+
+    .register-main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 45px 20px;
+    }
+
+    .register-card {
+      width: 100%;
+      max-width: 510px;
+      padding: 40px;
+      background: #ffffff;
+      border: 1px solid #e7eaf0;
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(16,27,45,.10);
+    }
+
+    .register-brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-mark {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 17px;
+      background: #101b2d;
+      color: #c9a96e;
+      font-size: 1.5rem;
+      font-weight: 900;
+      border-radius: 14px;
+    }
+
+    .register-brand h1 {
+      font-size: 2rem;
+      margin-bottom: 9px;
+    }
+
+    .register-brand p {
+      font-size: .92rem;
+    }
+
+    .register-form label {
+      display: block;
+      margin: 16px 0 7px;
+      color: #101b2d;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    .register-form input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #e7eaf0;
+      border-radius: 8px;
+      outline: none;
+      background: #fcfcfd;
+      color: #101b2d;
+    }
+
+    .register-form input:focus {
+      border-color: #c9a96e;
+      box-shadow: 0 0 0 3px rgba(201,169,110,.12);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap input {
+      padding-right: 75px;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: #a8874c;
+      font-size: .8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .password-hint {
+      display: block;
+      margin-top: 7px;
+      color: #748094;
+      font-size: .76rem;
+    }
+
+    .terms {
+      display: flex !important;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 20px 0 !important;
+      font-weight: 400 !important;
+      color: #748094 !important;
+      font-size: .82rem !important;
+      line-height: 1.5;
+    }
+
+    .terms input {
+      width: auto;
+      margin-top: 4px;
+      accent-color: #c9a96e;
+    }
+
+    .terms a,
+    .login-link {
+      color: #a8874c;
+      font-weight: 700;
+    }
+
+    .register-submit {
+      width: 100%;
+      padding: 15px;
+      background: #101b2d;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .register-submit:hover {
+      background: #1b2b43;
+      transform: translateY(-2px);
+    }
+
+    .register-status {
+      min-height: 22px;
+      margin-top: 14px;
+      text-align: center;
+      font-size: .84rem;
+    }
+
+    .register-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: #9aa3b1;
+      font-size: .8rem;
+    }
+
+    .register-divider::before,
+    .register-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e7eaf0;
+    }
+
+    .login-text {
+      text-align: center;
+      font-size: .9rem;
+    }
+
+    .back-home {
+      display: block;
+      text-align: center;
+      margin-top: 22px;
+      color: #748094;
+      font-size: .85rem;
+    }
+
+    .register-footer {
+      padding: 22px;
+      text-align: center;
+      border-top: 1px solid #e7eaf0;
+      font-size: .8rem;
+    }
+
+    @media(max-width: 480px) {
+      .register-card {
+        padding: 30px 22px;
+      }
+
+      .register-brand h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="register-header">
+    <a href="index.html" class="logo">
+      NEXORA<span>.</span>
+    </a>
+  </header>
+
+  <main class="register-main">
+
+    <section class="register-card">
+
+      <div class="register-brand">
+
+        <div class="brand-mark">N</div>
+
+        <h1>Create Account</h1>
+
+        <p>Join NEXORA and manage your business.</p>
+
+      </div>
+
+      <form class="register-form" id="registerForm">
+
+        <label for="fullName">Full Name</label>
+
+        <input
+          type="text"
+          id="fullName"
+          name="fullName"
+          placeholder="Enter your full name"
+          autocomplete="name"
+          minlength="2"
+          required
+        >
+
+        <label for="registerEmail">Email Address</label>
+
+        <input
+          type="email"
+          id="registerEmail"
+          name="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+          required
+        >
+
+        <label for="phoneNumber">Phone Number</label>
+
+        <input
+          type="tel"
+          id="phoneNumber"
+          name="phone"
+          placeholder="Enter your phone number"
+          autocomplete="tel"
+          required
+        >
+
+        <label for="registerPassword">Password</label>
+
+        <div class="password-wrap">
+
+          <input
+            type="password"
+            id="registerPassword"
+            name="password"
+            placeholder="Create a password"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          >
+
+          <button
+            type="button"
+            class="show-password"
+            data-toggle="registerPassword"
+          >
+            Show
+          </button>
+
+        </div>
+
+        <small class="password-hint">
+          Use at least 8 characters.
+        </small>
+
+        <label for="confirmPassword">Confirm Password</label>
+
+        <div class="password-wrap">
+
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Enter your password again"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          >
+
+          <button
+            type="button"
+            class="show-password"
+            data-toggle="confirmPassword"
+          >
+            Show
+          </button>
+
+        </div>
+
+        <label class="terms">
+
+          <input
+            type="checkbox"
+            id="acceptTerms"
+            required
+          >
+
+          <span>
+            I agree to the
+            <a href="terms.html">Terms & Conditions</a>
+            and
+            <a href="privacy.html">Privacy Policy</a>.
+          </span>
+
+        </label>
+
+        <button type="submit" class="register-submit">
+          Create My Account
+        </button>
+
+        <p
+          class="register-status"
+          id="registerStatus"
+          aria-live="polite"
+        ></p>
+
+      </form>
+
+      <div class="register-divider">OR</div>
+
+      <p class="login-text">
+        Already have an account?
+        <a href="login.html" class="login-link">
+          Sign In
+        </a>
+      </p>
+
+      <a href="index.html" class="back-home">
+        ← Back to Homepage
+      </a>
+
+    </section>
+
+  </main>
+
+  <footer class="register-footer">
+    <p>
+      © <span id="currentYear"></span>
+      NEXORA. All rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    "use strict";
+
+    // Show and hide password
+
+    document.querySelectorAll("[data-toggle]").forEach(function(button) {
+
+      button.addEventListener("click", function() {
+
+        const inputId = button.getAttribute("data-toggle");
+        const input = document.getElementById(inputId);
+
+        const hidden = input.type === "password";
+
+        input.type = hidden ? "text" : "password";
+        button.textContent = hidden ? "Hide" : "Show";
+
+      });
+
+    });
+
+    // Current year
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+    // Registration form validation
+
+    const registerForm = document.getElementById("registerForm");
+
+    const registerStatus =
+      document.getElementById("registerStatus");
+
+    registerForm.addEventListener("submit", function(event) {
+
+      event.preventDefault();
+
+      const password =
+        document.getElementById("registerPassword").value;
+
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+      if (password.length < 8) {
+
+        registerStatus.style.color = "#c0392b";
+        registerStatus.textContent =
+          "Password must contain at least 8 characters.";
+
+        return;
+
+      }
+
+      if (password !== confirmPassword) {
+
+        registerStatus.style.color = "#c0392b";
+        registerStatus.textContent =
+          "Passwords do not match.";
+
+        return;
+
+      }
+
+      registerStatus.style.color = "#b06b32";
+
+      registerStatus.textContent =
+        "Information is valid. Firebase Registration is not connected yet.";
+
+    });
+
+  </script>
+
+</body>
+</html>
