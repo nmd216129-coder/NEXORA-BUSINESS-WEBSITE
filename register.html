@@ -1,15 +1,12 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Create Account | NEXORA Premium</title>
-
-  <meta name="description" content="Create your NEXORA Premium business account.">
-
+  <meta name="description" content="Create your secure NEXORA business account.">
   <meta name="theme-color" content="#101b2d">
 
   <link rel="stylesheet" href="style.css">
@@ -18,16 +15,16 @@
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at 85% 10%, #f1e9d9 0, transparent 35%),
+        radial-gradient(circle at 85% 15%, #f1e9d9 0, transparent 35%),
         linear-gradient(135deg, #ffffff, #f7f8fa);
       display: flex;
       flex-direction: column;
     }
 
     .register-header {
-      padding: 20px 5%;
-      background: rgba(255,255,255,.96);
+      padding: 22px 5%;
       border-bottom: 1px solid #e7eaf0;
+      background: rgba(255,255,255,.95);
     }
 
     .register-header .logo {
@@ -38,14 +35,14 @@
       flex: 1;
       display: grid;
       place-items: center;
-      padding: 45px 20px;
+      padding: 50px 20px;
     }
 
     .register-card {
       width: 100%;
-      max-width: 510px;
-      padding: 40px;
+      max-width: 500px;
       background: #ffffff;
+      padding: 40px;
       border: 1px solid #e7eaf0;
       border-radius: 18px;
       box-shadow: 0 20px 60px rgba(16,27,45,.10);
@@ -53,7 +50,7 @@
 
     .register-brand {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 30px;
     }
 
     .brand-mark {
@@ -61,7 +58,7 @@
       height: 58px;
       display: grid;
       place-items: center;
-      margin: 0 auto 17px;
+      margin: 0 auto 18px;
       background: #101b2d;
       color: #c9a96e;
       font-size: 1.5rem;
@@ -75,25 +72,25 @@
     }
 
     .register-brand p {
-      font-size: .92rem;
+      font-size: .93rem;
     }
 
     .register-form label {
       display: block;
-      margin: 16px 0 7px;
+      margin: 17px 0 7px;
       color: #101b2d;
       font-size: .9rem;
       font-weight: 700;
     }
 
-    .register-form input {
+    .register-form input:not([type="checkbox"]) {
       width: 100%;
       padding: 14px;
       border: 1px solid #e7eaf0;
       border-radius: 8px;
       outline: none;
-      background: #fcfcfd;
       color: #101b2d;
+      background: #fcfcfd;
     }
 
     .register-form input:focus {
@@ -106,7 +103,7 @@
     }
 
     .password-wrap input {
-      padding-right: 75px;
+      padding-right: 75px !important;
     }
 
     .show-password {
@@ -114,51 +111,48 @@
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
-      border: none;
+      border: 0;
       background: transparent;
       color: #a8874c;
-      font-size: .8rem;
       font-weight: 700;
+      font-size: .8rem;
       cursor: pointer;
     }
 
-    .password-hint {
+    .password-help {
       display: block;
       margin-top: 7px;
       color: #748094;
       font-size: .76rem;
     }
 
-    .terms {
-      display: flex !important;
+    .terms-row {
+      display: flex;
       align-items: flex-start;
       gap: 9px;
-      margin: 20px 0 !important;
-      font-weight: 400 !important;
-      color: #748094 !important;
-      font-size: .82rem !important;
-      line-height: 1.5;
+      margin: 22px 0;
+      color: #748094;
+      font-size: .83rem;
+      line-height: 1.6;
     }
 
-    .terms input {
-      width: auto;
+    .terms-row input {
       margin-top: 4px;
       accent-color: #c9a96e;
     }
 
-    .terms a,
-    .login-link {
+    .terms-row a {
       color: #a8874c;
       font-weight: 700;
     }
 
     .register-submit {
       width: 100%;
+      border: 0;
       padding: 15px;
+      border-radius: 8px;
       background: #101b2d;
       color: #ffffff;
-      border: none;
-      border-radius: 8px;
       font-weight: 700;
       cursor: pointer;
       transition: .3s;
@@ -169,18 +163,25 @@
       transform: translateY(-2px);
     }
 
+    .register-submit:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .register-status {
+      margin-top: 15px;
       min-height: 22px;
-      margin-top: 14px;
+      font-size: .85rem;
       text-align: center;
-      font-size: .84rem;
+      line-height: 1.5;
     }
 
     .register-divider {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin: 24px 0;
+      margin: 25px 0;
       color: #9aa3b1;
       font-size: .8rem;
     }
@@ -188,8 +189,8 @@
     .register-divider::before,
     .register-divider::after {
       content: "";
-      flex: 1;
       height: 1px;
+      flex: 1;
       background: #e7eaf0;
     }
 
@@ -198,17 +199,23 @@
       font-size: .9rem;
     }
 
+    .login-text a,
+    .back-home {
+      color: #a8874c;
+      font-weight: 700;
+    }
+
     .back-home {
       display: block;
       text-align: center;
-      margin-top: 22px;
+      margin-top: 24px;
       color: #748094;
       font-size: .85rem;
     }
 
     .register-footer {
-      padding: 22px;
       text-align: center;
+      padding: 22px;
       border-top: 1px solid #e7eaf0;
       font-size: .8rem;
     }
@@ -238,13 +245,11 @@
     <section class="register-card">
 
       <div class="register-brand">
-
         <div class="brand-mark">N</div>
 
         <h1>Create Account</h1>
 
-        <p>Join NEXORA and manage your business.</p>
-
+        <p>Join NEXORA and create your business account.</p>
       </div>
 
       <form class="register-form" id="registerForm">
@@ -254,10 +259,9 @@
         <input
           type="text"
           id="fullName"
-          name="fullName"
           placeholder="Enter your full name"
           autocomplete="name"
-          minlength="2"
+          maxlength="80"
           required
         >
 
@@ -266,7 +270,6 @@
         <input
           type="email"
           id="registerEmail"
-          name="email"
           placeholder="Enter your email"
           autocomplete="email"
           required
@@ -277,21 +280,20 @@
         <input
           type="tel"
           id="phoneNumber"
-          name="phone"
           placeholder="Enter your phone number"
           autocomplete="tel"
+          maxlength="20"
           required
         >
 
-        <label for="registerPassword">Password</label>
+        <label for="registerPassword">Create Password</label>
 
         <div class="password-wrap">
 
           <input
             type="password"
             id="registerPassword"
-            name="password"
-            placeholder="Create a password"
+            placeholder="Create your password"
             autocomplete="new-password"
             minlength="8"
             required
@@ -301,13 +303,11 @@
             type="button"
             class="show-password"
             data-toggle="registerPassword"
-          >
-            Show
-          </button>
+          >Show</button>
 
         </div>
 
-        <small class="password-hint">
+        <small class="password-help">
           Use at least 8 characters.
         </small>
 
@@ -318,7 +318,6 @@
           <input
             type="password"
             id="confirmPassword"
-            name="confirmPassword"
             placeholder="Enter your password again"
             autocomplete="new-password"
             minlength="8"
@@ -329,13 +328,11 @@
             type="button"
             class="show-password"
             data-toggle="confirmPassword"
-          >
-            Show
-          </button>
+          >Show</button>
 
         </div>
 
-        <label class="terms">
+        <div class="terms-row">
 
           <input
             type="checkbox"
@@ -343,23 +340,28 @@
             required
           >
 
-          <span>
+          <label for="acceptTerms" style="margin:0;font-weight:400;">
             I agree to the
             <a href="terms.html">Terms & Conditions</a>
             and
             <a href="privacy.html">Privacy Policy</a>.
-          </span>
+          </label>
 
-        </label>
+        </div>
 
-        <button type="submit" class="register-submit">
-          Create My Account
+        <button
+          type="submit"
+          class="register-submit"
+          id="registerButton"
+        >
+          Create Account
         </button>
 
         <p
           class="register-status"
           id="registerStatus"
           aria-live="polite"
+          role="status"
         ></p>
 
       </form>
@@ -368,9 +370,7 @@
 
       <p class="login-text">
         Already have an account?
-        <a href="login.html" class="login-link">
-          Sign In
-        </a>
+        <a href="login.html">Sign In</a>
       </p>
 
       <a href="index.html" class="back-home">
@@ -388,17 +388,38 @@
     </p>
   </footer>
 
-  <script>
-    "use strict";
+  <script type="module">
 
-    // Show and hide password
+    import { auth } from "./firebase.js";
 
-    document.querySelectorAll("[data-toggle]").forEach(function(button) {
+    import {
+      createUserWithEmailAndPassword,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-      button.addEventListener("click", function() {
+    const registerForm = document.getElementById("registerForm");
 
-        const inputId = button.getAttribute("data-toggle");
-        const input = document.getElementById(inputId);
+    const fullName = document.getElementById("fullName");
+    const emailInput = document.getElementById("registerEmail");
+    const phoneInput = document.getElementById("phoneNumber");
+    const passwordInput = document.getElementById("registerPassword");
+    const confirmInput = document.getElementById("confirmPassword");
+
+    const acceptTerms = document.getElementById("acceptTerms");
+    const registerButton = document.getElementById("registerButton");
+    const registerStatus = document.getElementById("registerStatus");
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+    // Show / Hide Password
+    document.querySelectorAll("[data-toggle]").forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const input = document.getElementById(
+          button.dataset.toggle
+        );
 
         const hidden = input.type === "password";
 
@@ -409,52 +430,135 @@
 
     });
 
-    // Current year
+    function showMessage(message, color) {
+      registerStatus.textContent = message;
+      registerStatus.style.color = color;
+    }
 
-    document.getElementById("currentYear").textContent =
-      new Date().getFullYear();
+    // Firebase Error Messages
+    function getErrorMessage(errorCode) {
 
-    // Registration form validation
+      const messages = {
+        "auth/email-already-in-use":
+          "This email already has an account. Please sign in.",
 
-    const registerForm = document.getElementById("registerForm");
+        "auth/invalid-email":
+          "Please enter a valid email address.",
 
-    const registerStatus =
-      document.getElementById("registerStatus");
+        "auth/weak-password":
+          "Your password is too weak. Use at least 8 characters.",
 
-    registerForm.addEventListener("submit", function(event) {
+        "auth/operation-not-allowed":
+          "Email registration is not enabled in Firebase.",
+
+        "auth/network-request-failed":
+          "Network error. Please check your internet connection.",
+
+        "auth/too-many-requests":
+          "Too many attempts. Please try again later."
+      };
+
+      return messages[errorCode] ||
+        "Registration failed. Please try again.";
+
+    }
+
+    // Firebase Registration
+    registerForm.addEventListener("submit", async (event) => {
 
       event.preventDefault();
 
-      const password =
-        document.getElementById("registerPassword").value;
+      const name = fullName.value.trim();
+      const email = emailInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmInput.value;
 
-      const confirmPassword =
-        document.getElementById("confirmPassword").value;
+      if (name.length < 2) {
+        showMessage("Please enter your full name.", "#c0392b");
+        return;
+      }
+
+      if (!phone) {
+        showMessage("Please enter your phone number.", "#c0392b");
+        return;
+      }
 
       if (password.length < 8) {
-
-        registerStatus.style.color = "#c0392b";
-        registerStatus.textContent =
-          "Password must contain at least 8 characters.";
-
+        showMessage(
+          "Password must contain at least 8 characters.",
+          "#c0392b"
+        );
         return;
-
       }
 
       if (password !== confirmPassword) {
-
-        registerStatus.style.color = "#c0392b";
-        registerStatus.textContent =
-          "Passwords do not match.";
-
+        showMessage(
+          "Passwords do not match.",
+          "#c0392b"
+        );
         return;
-
       }
 
-      registerStatus.style.color = "#b06b32";
+      if (!acceptTerms.checked) {
+        showMessage(
+          "Please accept the Terms & Conditions.",
+          "#c0392b"
+        );
+        return;
+      }
 
-      registerStatus.textContent =
-        "Information is valid. Firebase Registration is not connected yet.";
+      registerButton.disabled = true;
+      registerButton.textContent = "Creating Account...";
+
+      showMessage(
+        "Please wait while your account is created...",
+        "#748094"
+      );
+
+      try {
+
+        const userCredential =
+          await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+        // Save display name in Firebase Authentication profile
+        await updateProfile(userCredential.user, {
+          displayName: name
+        });
+
+        showMessage(
+          "Account created successfully! You can now sign in.",
+          "#18864b"
+        );
+
+        registerForm.reset();
+
+        // Phone number is collected here but is not yet
+        // saved to Firestore or Firebase phone authentication.
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1800);
+
+      } catch (error) {
+
+        console.error("Registration error:", error.code);
+
+        showMessage(
+          getErrorMessage(error.code),
+          "#c0392b"
+        );
+
+      } finally {
+
+        registerButton.disabled = false;
+        registerButton.textContent = "Create Account";
+
+      }
 
     });
 
