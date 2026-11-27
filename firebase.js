@@ -1,25 +1,11 @@
 
-/* =========================================
-   NEXORA BUSINESS WEBSITE
-   FIREBASE CONFIGURATION
-========================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 
-// Firebase SDK Imports
+import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-import { getAuth }
-from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
-import { getFirestore }
-from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-import { getStorage }
-from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
-
-
-// Firebase Configuration
+import { getStorage } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAjYGwVfgEAe-wYGwAsa3wwN3_V09FDRXk",
@@ -31,32 +17,10 @@ const firebaseConfig = {
   measurementId: "G-Q44VLSD8MT"
 };
 
-
-// Initialize Firebase
-
 const app = initializeApp(firebaseConfig);
 
-
-// Firebase Authentication
-
 const auth = getAuth(app);
-
-
-// Cloud Firestore
-
 const db = getFirestore(app);
-
-
-// Firebase Storage
-
 const storage = getStorage(app);
 
-
-// Export Services
-
-export {
-  app,
-  auth,
-  db,
-  storage
-};
+export { app, auth, db, storage };
