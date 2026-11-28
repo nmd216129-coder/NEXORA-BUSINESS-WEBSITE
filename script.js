@@ -13,28 +13,48 @@ document.addEventListener("DOMContentLoaded", function () {
   const menuToggle = document.getElementById("menuToggle");
   const navigation = document.getElementById("navigation");
 
+  function closeMenu() {
+    if (!menuToggle || !navigation) return;
+
+    navigation.classList.remove("active");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Open navigation menu");
+    menuToggle.textContent = "☰";
+  }
+
+  function openMenu() {
+    if (!menuToggle || !navigation) return;
+
+    navigation.classList.add("active");
+    menuToggle.setAttribute("aria-expanded", "true");
+    menuToggle.setAttribute("aria-label", "Close navigation menu");
+    menuToggle.textContent = "×";
+  }
+
   if (menuToggle && navigation) {
 
     menuToggle.addEventListener("click", function () {
 
-      const isOpen = navigation.classList.toggle("active");
+      const isOpen =
+        navigation.classList.contains("active");
 
-      menuToggle.setAttribute("aria-expanded", String(isOpen));
-      menuToggle.textContent = isOpen ? "×" : "☰";
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
 
     });
+
+    // Close menu after clicking a navigation link
 
     navigation.querySelectorAll("a").forEach(function (link) {
 
-      link.addEventListener("click", function () {
-
-        navigation.classList.remove("active");
-        menuToggle.setAttribute("aria-expanded", "false");
-        menuToggle.textContent = "☰";
-
-      });
+      link.addEventListener("click", closeMenu);
 
     });
+
+    // Close menu when clicking outside
 
     document.addEventListener("click", function (event) {
 
@@ -42,11 +62,17 @@ document.addEventListener("DOMContentLoaded", function () {
         !navigation.contains(event.target) &&
         !menuToggle.contains(event.target)
       ) {
+        closeMenu();
+      }
 
-        navigation.classList.remove("active");
-        menuToggle.setAttribute("aria-expanded", "false");
-        menuToggle.textContent = "☰";
+    });
 
+    // Close menu with Escape key
+
+    document.addEventListener("keydown", function (event) {
+
+      if (event.key === "Escape") {
+        closeMenu();
       }
 
     });
@@ -56,51 +82,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 02. CONTACT FORM VALIDATION
 
-  const contactForm = document.getElementById("contactForm");
-  const contactStatus = document.getElementById("contactStatus");
+  const contactForm =
+    document.getElementById("contactForm");
 
-  if (contactForm) {
-
-    contactForm.addEventListener("submit", function (event) {
-
-      event.preventDefault();
-
-      const name = document.getElementById("contactName");
-      const email = document.getElementById("contactEmail");
-      const message = document.getElementById("contactMessage");
-
-      if (!name || !email || !message) {
-        return;
-      }
-
-      const nameValue = name.value.trim();
-      const emailValue = email.value.trim();
-      const messageValue = message.value.trim();
-
-      if (!nameValue || !emailValue || !messageValue) {
-
-        showStatus("Please complete all fields.", "error");
-        return;
-
-      }
-
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      if (!emailPattern.test(emailValue)) {
-
-        showStatus("Please enter a valid email address.", "error");
-        return;
-
-      }
-
-      showStatus(
-        "Your information is valid. Contact form backend is not connected yet.",
-        "success"
-      );
-
-    });
-
-  }
+  const contactStatus =
+    document.getElementById("contactStatus");
 
   function showStatus(message, type) {
 
@@ -113,38 +99,124 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
+  if (contactForm) {
 
-  // 03. CURRENT YEAR
+    contactForm.addEventListener("submit", function (event) {
 
-  const yearElement = document.getElementById("currentYear");
+      event.preventDefault();
+
+      const name =
+        document.getElementById("contactName");
+
+      const email =
+        document.getElementById("contactEmail");
+
+      const message =
+        document.getElementById("contactMessage");
+
+      if (!name || !email || !message) {
+
+        showStatus(
+          "Form fields could not be found. Please check the HTML.",
+          "error"
+        );
+
+        return;
+      }
+
+      const nameValue = name.value.trim();
+      const emailValue = email.value.trim();
+      const messageValue = message.value.trim();
+
+      // Check empty fields
+
+      if (!nameValue || !emailValue || !messageValue) {
+
+        showStatus(
+          "Please complete all fields.",
+          "error"
+        );
+
+        return;
+      }
+
+      // Check email format
+
+      const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailPattern.test(emailValue)) {
+
+        showStatus(
+          "Please enter a valid email address.",
+          "error"
+        );
+
+        return;
+      }
+
+      // Frontend validation only.
+      // No email or Firebase backend is connected.
+
+      showStatus(
+        "Your information is valid. Contact form backend is not connected yet.",
+        "success"
+      );
+
+    });
+
+  }
+
+
+  // 03. AUTOMATIC CURRENT YEAR
+
+  const yearElement =
+    document.getElementById("currentYear");
 
   if (yearElement) {
 
-    yearElement.textContent = new Date().getFullYear();
+    yearElement.textContent =
+      new Date().getFullYear();
 
   }
 
 
   // 04. SMOOTH SCROLL
 
+  const prefersReducedMotion =
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function scrollToElement(element) {
+
+    if (!element) return;
+
+    element.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start"
+    });
+
+  }
+
+  // Handle internal navigation links
+
   document.querySelectorAll('a[href^="#"]').forEach(function (link) {
 
     link.addEventListener("click", function (event) {
 
-      const targetId = link.getAttribute("href");
+      const targetId =
+        link.getAttribute("href");
 
       if (!targetId || targetId === "#") return;
 
-      const target = document.querySelector(targetId);
+      const target =
+        document.getElementById(targetId.slice(1));
 
       if (target) {
 
         event.preventDefault();
 
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+        scrollToElement(target);
 
       }
 
@@ -153,25 +225,34 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-  // 05. BUTTON CLICK FEEDBACK
+  // 05. DATA-SCROLL BUTTONS
 
   document.querySelectorAll("[data-scroll]").forEach(function (button) {
 
     button.addEventListener("click", function () {
 
-      const targetId = button.getAttribute("data-scroll");
-      const target = document.querySelector(targetId);
+      const targetId =
+        button.getAttribute("data-scroll");
+
+      if (!targetId) return;
+
+      const cleanId =
+        targetId.startsWith("#")
+          ? targetId.slice(1)
+          : targetId;
+
+      const target =
+        document.getElementById(cleanId);
 
       if (target) {
 
-        target.scrollIntoView({
-          behavior: "smooth"
-        });
+        scrollToElement(target);
 
       }
 
     });
 
   });
+
 
 });
