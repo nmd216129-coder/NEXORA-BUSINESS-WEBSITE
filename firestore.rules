@@ -4,45 +4,231 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // User profile security
-    match /users/{userId} {
+    // ==============================
+    // AUTHENTICATION & ADMIN
+    // ==============================
 
-      // Only the account owner can read their profile
-      allow read: if request.auth != null
-                  && request.auth.uid == userId;
-
-      // Users can create only their own profile
-      // Role must always be "user"
-      allow create: if request.auth != null
-                    && request.auth.uid == userId
-                    && request.resource.data.uid == request.auth.uid
-                    && request.resource.data.role == "user"
-                    && request.resource.data.keys().hasOnly([
-                      "uid",
-                      "fullName",
-                      "email",
-                      "phone",
-                      "role",
-                      "createdAt"
-                    ]);
-
-      // Users cannot change their role
-      allow update: if request.auth != null
-                    && request.auth.uid == userId
-                    && request.resource.data.uid == resource.data.uid
-                    && request.resource.data.role == resource.data.role
-                    && request.resource.data.diff(resource.data)
-                       .affectedKeys()
-                       .hasOnly([
-                         "fullName",
-                         "phone"
-                       ]);
-
-      // Users cannot delete their profile
-      allow delete: if false;
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Deny access to all other collections by default
+    function isAdmin() {
+      return isSignedIn()
+        && request.auth.token.admin == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn()
+        && request.auth.uid == userId;
+    }
+
+
+    // ==============================
+    // USERS
+    // ==============================
+
+    match /users/{userId} {
+
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+          "uid",
+          "fullName",
+          "email",
+          "phone",
+          "role",
+          "createdAt"
+        ])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.fullName is string
+        && request.resource.data.fullName.size() >= 2
+        && request.resource.data.fullName.size() <= 80
+        && request.resource.data.email is string
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() >= 7
+        && request.resource.data.phone.size() <= 20
+        && request.resource.data.role == "user"
+        && request.resource.data.createdAt is timestamp;
+
+      allow read: if isOwner(userId) || isAdmin();
+
+      allow update: if isOwner(userId)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.diff(resource.data)
+          .affectedKeys()
+          .hasOnly(["fullName", "phone"])
+        && request.resource.data.fullName is string
+        && request.resource.data.fullName.size() >= 2
+        && request.resource.data.fullName.size() <= 80
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() >= 7
+        && request.resource.data.phone.size() <= 20;
+
+      allow delete: if isAdmin();
+    }
+
+
+    // ==============================
+    // BOOKINGS
+    // ==============================
+
+    match /bookings/{bookingId} {
+
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == "pending"
+        && request.resource.data.createdAt is timestamp;
+
+      allow read: if isAdmin()
+        || (
+          isSignedIn()
+          && resource.data.userId == request.auth.uid
+        );
+
+      // Only Admin can update or delete bookings
+      allow update, delete: if isAdmin();
+    }
+
+
+    // ==============================
+    // MEETINGS
+    // ==============================
+
+    match /meetings/{meetingId} {
+
+      allow create: if isSignedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.participantUids is list
+        && request.resource.data.participantUids.size() <= 50
+        && request.resource.data.participantUids.hasAny([
+          request.auth.uid
+        ])
+        && request.resource.data.createdAt is timestamp;
+
+      allow read: if isAdmin()
+        || (
+          isSignedIn()
+          && resource.data.participantUids is list
+          && resource.data.participantUids.hasAny([
+            request.auth.uid
+          ])
+        );
+
+      allow update: if isAdmin()
+        || (
+          isSignedIn()
+          && resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdBy == resource.data.createdBy
+          && request.resource.data.participantUids
+            == resource.data.participantUids
+        );
+
+      allow delete: if isAdmin();
+    }
+
+
+    // ==============================
+    // CHATS
+    // ==============================
+
+    match /chats/{chatId} {
+
+      allow create: if isSignedIn()
+        && request.resource.data.participantUids is list
+        && request.resource.data.participantUids.size() >= 2
+        && request.resource.data.participantUids.size() <= 20
+        && request.resource.data.participantUids.hasAny([
+          request.auth.uid
+        ]);
+
+      allow read: if isAdmin()
+        || (
+          isSignedIn()
+          && resource.data.participantUids is list
+          && resource.data.participantUids.hasAny([
+            request.auth.uid
+          ])
+        );
+
+      allow update, delete: if isAdmin();
+
+      // Chat messages
+      match /messages/{messageId} {
+
+        function isChatParticipant() {
+          return isSignedIn()
+            && get(
+              /databases/$(database)/documents/chats/$(chatId)
+            ).data.participantUids.hasAny([
+              request.auth.uid
+            ]);
+        }
+
+        allow read: if isAdmin() || isChatParticipant();
+
+        allow create: if isChatParticipant()
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 5000
+          && request.resource.data.createdAt is timestamp;
+
+        allow update, delete: if isAdmin();
+      }
+    }
+
+
+    // ==============================
+    // EMPLOYEES
+    // ==============================
+
+    match /employees/{employeeId} {
+
+      allow read, write: if isAdmin();
+    }
+
+
+    // ==============================
+    // CLIENTS
+    // ==============================
+
+    match /clients/{clientId} {
+
+      allow read, write: if isAdmin();
+    }
+
+
+    // ==============================
+    // NOTIFICATIONS
+    // ==============================
+
+    match /notifications/{notificationId} {
+
+      allow create: if isAdmin();
+
+      allow read: if isAdmin()
+        || (
+          isSignedIn()
+          && resource.data.recipientId == request.auth.uid
+        );
+
+      allow update: if isSignedIn()
+        && resource.data.recipientId == request.auth.uid
+        && request.resource.data.diff(resource.data)
+          .affectedKeys()
+          .hasOnly(["read"]);
+
+      allow delete: if isAdmin();
+    }
+
+
+    // ==============================
+    // DENY ALL OTHER COLLECTIONS
+    // ==============================
+
     match /{document=**} {
       allow read, write: if false;
     }
