@@ -1,0 +1,822 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Booking | NEXORA</title>
+  <meta name="description" content="Book a service or appointment through the NEXORA business platform.">
+
+  <style>
+    :root {
+      --navy: #101b2d;
+      --navy-light: #1b2d49;
+      --gold: #c9a96e;
+      --bg: #f7f8fa;
+      --white: #ffffff;
+      --text: #263247;
+      --muted: #7b8493;
+      --border: #e5e9ef;
+      --success: #18794e;
+      --danger: #c0392b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    .header {
+      background: var(--navy);
+      padding: 18px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .logo {
+      color: var(--white);
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    .logo span {
+      color: var(--gold);
+    }
+
+    .header-link {
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .header-link:hover {
+      color: var(--gold);
+    }
+
+    .page-container {
+      max-width: 1100px;
+      margin: 45px auto;
+      padding: 0 20px;
+    }
+
+    .page-heading {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .page-heading .eyebrow {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .page-heading h1 {
+      color: var(--navy);
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .page-heading p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 25px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(16, 27, 45, 0.04);
+    }
+
+    .card h2 {
+      color: var(--navy);
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .card-description {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 9px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: white;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.12);
+    }
+
+    .form-group textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 7px;
+      background: var(--navy);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .submit-button:hover {
+      background: var(--navy-light);
+    }
+
+    .submit-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .message {
+      display: none;
+      padding: 13px;
+      border-radius: 6px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .message.success {
+      display: block;
+      color: var(--success);
+      background: #eaf7ef;
+    }
+
+    .message.error {
+      display: block;
+      color: var(--danger);
+      background: #fff0ee;
+    }
+
+    .booking-info {
+      background: var(--navy);
+      color: white;
+      border-radius: 12px;
+      padding: 27px;
+      margin-bottom: 20px;
+    }
+
+    .booking-info h3 {
+      font-size: 19px;
+      margin-bottom: 15px;
+      color: var(--gold);
+    }
+
+    .booking-info p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #d4dbe5;
+    }
+
+    .info-item {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      align-items: flex-start;
+    }
+
+    .info-icon {
+      color: var(--gold);
+      font-size: 19px;
+    }
+
+    .info-item strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .info-item span {
+      display: block;
+      color: #c4ccda;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .my-bookings {
+      margin-top: 35px;
+    }
+
+    .my-bookings h2 {
+      color: var(--navy);
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
+
+    .booking-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .booking-item {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 18px;
+    }
+
+    .booking-item h3 {
+      color: var(--navy);
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .booking-item p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .booking-status {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 5px;
+      background: #fff5df;
+      color: #8a641f;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .empty-message {
+      color: var(--muted);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      font-size: 13px;
+    }
+
+    .loading {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 12px 0;
+    }
+
+    .footer {
+      margin-top: 55px;
+      background: var(--navy);
+      color: #c4ccda;
+      padding: 22px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    @media (max-width: 800px) {
+      .booking-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .page-container {
+        margin: 30px auto;
+        padding: 0 14px;
+      }
+
+      .page-heading h1 {
+        font-size: 26px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .form-group.full-width {
+        grid-column: auto;
+      }
+
+      .header {
+        padding: 16px 18px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <a href="index.html" class="logo">NEX<span>ORA</span></a>
+    <a href="dashboard.html" class="header-link">← Dashboard</a>
+  </header>
+
+  <main class="page-container">
+
+    <section class="page-heading">
+      <p class="eyebrow">NEXORA SERVICES</p>
+      <h1>Book an Appointment</h1>
+      <p>
+        Schedule your service and let our team help you.
+      </p>
+    </section>
+
+    <div id="pageMessage" class="message"></div>
+
+    <section class="booking-layout">
+
+      <div class="card">
+
+        <h2>Booking Information</h2>
+        <p class="card-description">
+          Complete the form below to request an appointment.
+        </p>
+
+        <form id="bookingForm">
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="clientName">Full Name *</label>
+              <input
+                type="text"
+                id="clientName"
+                maxlength="100"
+                placeholder="Enter your full name"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="clientEmail">Email Address *</label>
+              <input
+                type="email"
+                id="clientEmail"
+                placeholder="Enter your email"
+                required
+                readonly
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="clientPhone">Phone Number *</label>
+              <input
+                type="tel"
+                id="clientPhone"
+                maxlength="20"
+                placeholder="Enter your phone number"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="service">Select Service *</label>
+              <select id="service" required>
+                <option value="">Choose a service</option>
+                <option value="Business Consultation">Business Consultation</option>
+                <option value="Website Development">Website Development</option>
+                <option value="Project Discussion">Project Discussion</option>
+                <option value="Technical Support">Technical Support</option>
+                <option value="Other Service">Other Service</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="bookingDate">Preferred Date *</label>
+              <input type="date" id="bookingDate" required>
+            </div>
+
+            <div class="form-group">
+              <label for="bookingTime">Preferred Time *</label>
+              <input type="time" id="bookingTime" required>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="bookingNotes">Additional Details</label>
+              <textarea
+                id="bookingNotes"
+                maxlength="1000"
+                placeholder="Tell us about your requirements..."
+              ></textarea>
+            </div>
+
+          </div>
+
+          <button
+            type="submit"
+            class="submit-button"
+            id="submitButton"
+            disabled
+          >
+            Loading Account...
+          </button>
+
+        </form>
+
+      </div>
+
+      <aside>
+
+        <div class="booking-info">
+          <h3>Booking Support</h3>
+
+          <p>
+            Submit your booking request. The team can review your
+            request and update its status.
+          </p>
+
+          <div class="info-item">
+            <span class="info-icon">◷</span>
+            <div>
+              <strong>Flexible Scheduling</strong>
+              <span>Choose your preferred appointment date and time.</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-icon">✓</span>
+            <div>
+              <strong>Booking Confirmation</strong>
+              <span>Your request will be saved for review.</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-icon">◉</span>
+            <div>
+              <strong>Account Based</strong>
+              <span>Your booking is linked to your signed-in account.</span>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </section>
+
+    <section class="my-bookings">
+
+      <h2>My Bookings</h2>
+
+      <div id="bookingLoading" class="loading">
+        Loading your bookings...
+      </div>
+
+      <div id="bookingList" class="booking-list"></div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    © <span id="currentYear"></span> NEXORA. All rights reserved.
+  </footer>
+
+  <script type="module">
+    import { auth, db } from "./firebase.js";
+
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+    import {
+      addDoc,
+      collection,
+      getDocs,
+      query,
+      where,
+      orderBy,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+    const bookingForm = document.getElementById("bookingForm");
+    const submitButton = document.getElementById("submitButton");
+    const pageMessage = document.getElementById("pageMessage");
+    const bookingList = document.getElementById("bookingList");
+    const bookingLoading = document.getElementById("bookingLoading");
+
+    const clientName = document.getElementById("clientName");
+    const clientEmail = document.getElementById("clientEmail");
+    const clientPhone = document.getElementById("clientPhone");
+    const service = document.getElementById("service");
+    const bookingDate = document.getElementById("bookingDate");
+    const bookingTime = document.getElementById("bookingTime");
+    const bookingNotes = document.getElementById("bookingNotes");
+
+    let currentUser = null;
+    let userProfile = {};
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+    const today = new Date();
+    const localToday = [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0")
+    ].join("-");
+
+    bookingDate.min = localToday;
+
+    function showMessage(message, type) {
+      pageMessage.textContent = message;
+      pageMessage.className = "message " + type;
+      pageMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+
+    function createTextElement(tag, text, className) {
+      const element = document.createElement(tag);
+      element.textContent = text;
+
+      if (className) {
+        element.className = className;
+      }
+
+      return element;
+    }
+
+    async function loadBookings(user) {
+      bookingLoading.hidden = false;
+      bookingList.replaceChildren();
+
+      try {
+        const bookingsQuery = query(
+          collection(db, "bookings"),
+          where("uid", "==", user.uid),
+          orderBy("createdAt", "desc")
+        );
+
+        const snapshot = await getDocs(bookingsQuery);
+
+        bookingLoading.hidden = true;
+
+        if (snapshot.empty) {
+          bookingList.appendChild(
+            createTextElement(
+              "p",
+              "You have not created any bookings yet.",
+              "empty-message"
+            )
+          );
+          return;
+        }
+
+        snapshot.forEach((bookingDocument) => {
+          const booking = bookingDocument.data();
+
+          const item = document.createElement("article");
+          item.className = "booking-item";
+
+          item.appendChild(
+            createTextElement("h3", booking.service || "Service Booking")
+          );
+
+          item.appendChild(
+            createTextElement(
+              "p",
+              "Date: " + (booking.date || "Not available")
+            )
+          );
+
+          item.appendChild(
+            createTextElement(
+              "p",
+              "Time: " + (booking.time || "Not available")
+            )
+          );
+
+          item.appendChild(
+            createTextElement(
+              "p",
+              "Name: " + (booking.clientName || "Not available")
+            )
+          );
+
+          item.appendChild(
+            createTextElement(
+              "span",
+              booking.status || "Pending",
+              "booking-status"
+            )
+          );
+
+          bookingList.appendChild(item);
+        });
+
+      } catch (error) {
+        console.error("Booking loading error:", error);
+        bookingLoading.hidden = true;
+
+        showMessage(
+          "Could not load bookings. Check your Firestore rules and index configuration.",
+          "error"
+        );
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.replace("login.html");
+        return;
+      }
+
+      currentUser = user;
+      clientEmail.value = user.email || "";
+
+      try {
+        const { doc, getDoc } = await import(
+          "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js"
+        );
+
+        const profileSnapshot = await getDoc(
+          doc(db, "users", user.uid)
+        );
+
+        if (profileSnapshot.exists()) {
+          userProfile = profileSnapshot.data();
+        }
+
+        clientName.value =
+          userProfile.fullName || user.displayName || "";
+
+        clientPhone.value = userProfile.phone || "";
+
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Booking Request";
+
+        await loadBookings(user);
+
+      } catch (error) {
+        console.error("Account loading error:", error);
+
+        showMessage(
+          "Your account is signed in, but profile information could not be loaded.",
+          "error"
+        );
+
+        // Allow the user to enter the required information manually.
+        clientName.value = user.displayName || "";
+        clientPhone.value = "";
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Booking Request";
+
+        await loadBookings(user);
+      }
+    });
+
+    bookingForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!currentUser) {
+        showMessage("Please log in before making a booking.", "error");
+        return;
+      }
+
+      const name = clientName.value.trim();
+      const phone = clientPhone.value.trim();
+      const selectedService = service.value;
+      const selectedDate = bookingDate.value;
+      const selectedTime = bookingTime.value;
+      const notes = bookingNotes.value.trim();
+
+      if (!name || !phone || !selectedService || !selectedDate || !selectedTime) {
+        showMessage("Please complete all required fields.", "error");
+        return;
+      }
+
+      if (selectedDate < localToday) {
+        showMessage("Please select today or a future date.", "error");
+        return;
+      }
+
+      if (name.length > 100 || phone.length > 20 || notes.length > 1000) {
+        showMessage("Please check the length of your information.", "error");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+
+      try {
+        await addDoc(collection(db, "bookings"), {
+          uid: currentUser.uid,
+          clientName: name,
+          clientEmail: currentUser.email || "",
+          clientPhone: phone,
+          service: selectedService,
+          date: selectedDate,
+          time: selectedTime,
+          notes: notes,
+          status: "Pending",
+          createdAt: serverTimestamp()
+        });
+
+        showMessage(
+          "Your booking request has been submitted successfully.",
+          "success"
+        );
+
+        bookingForm.reset();
+
+        clientEmail.value = currentUser.email || "";
+        clientName.value =
+          userProfile.fullName || currentUser.displayName || "";
+        clientPhone.value = userProfile.phone || "";
+
+        bookingDate.min = localToday;
+
+        await loadBookings(currentUser);
+
+      } catch (error) {
+        console.error("Booking submission error:", error);
+
+        showMessage(
+          "Booking could not be submitted. Please check your Firestore rules and internet connection.",
+          "error"
+        );
+
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Booking Request";
+      }
+    });
+  </script>
+
+</body>
+</html>
