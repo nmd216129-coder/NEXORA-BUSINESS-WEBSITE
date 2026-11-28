@@ -4,15 +4,30 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // =====================================
+    // 1. AUTHENTICATION
+    // =====================================
+
     function isSignedIn() {
       return request.auth != null;
     }
 
-    function isOwner(uid) {
-      return isSignedIn() && request.auth.uid == uid;
+    function isOwner(userId) {
+      return isSignedIn()
+        && request.auth.uid == userId;
     }
 
-    // USER PROFILE VALIDATION
+    // Admin must have a trusted Custom Claim.
+    function isAdmin() {
+      return isSignedIn()
+        && request.auth.token.admin == true;
+    }
+
+
+    // =====================================
+    // 2. USER PROFILE VALIDATION
+    // =====================================
+
     function validUserProfile(userId) {
       return request.resource.data.keys().hasAll([
         'uid',
@@ -40,9 +55,13 @@ service cloud.firestore {
       &&
       request.resource.data.fullName.size() <= 100
       &&
+      request.resource.data.email is string
+      &&
       request.resource.data.email == request.auth.token.email
       &&
       request.resource.data.phone is string
+      &&
+      request.resource.data.phone.size() > 0
       &&
       request.resource.data.phone.size() <= 20
       &&
@@ -51,7 +70,11 @@ service cloud.firestore {
       request.resource.data.createdAt == request.time;
     }
 
-    // BOOKING VALIDATION
+
+    // =====================================
+    // 3. BOOKING VALIDATION
+    // =====================================
+
     function validBooking() {
       return request.resource.data.keys().hasAll([
         'uid',
@@ -97,24 +120,30 @@ service cloud.firestore {
       &&
       request.resource.data.clientPhone.size() <= 20
       &&
-      request.resource.data.service in [
-        'Business Consultation',
-        'Website Development',
-        'Project Discussion',
-        'Technical Support',
-        'Other Service'
-      ]
+      request.resource.data.service is string
+      &&
+      (
+        request.resource.data.service == 'Business Consultation'
+        ||
+        request.resource.data.service == 'Website Development'
+        ||
+        request.resource.data.service == 'Project Discussion'
+        ||
+        request.resource.data.service == 'Technical Support'
+        ||
+        request.resource.data.service == 'Other Service'
+      )
       &&
       request.resource.data.date is string
       &&
       request.resource.data.date.matches(
-        '^\\d{4}-\\d{2}-\\d{2}$'
+        '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
       )
       &&
       request.resource.data.time is string
       &&
       request.resource.data.time.matches(
-        '^([01]\\d|2[0-3]):[0-5]\\d$'
+        '^([01][0-9]|2[0-3]):[0-5][0-9]$'
       )
       &&
       request.resource.data.notes is string
@@ -126,53 +155,103 @@ service cloud.firestore {
       request.resource.data.createdAt == request.time;
     }
 
-    // USER PROFILES
+
+    // =====================================
+    // 4. USERS COLLECTION
+    // =====================================
+
     match /users/{userId} {
 
-      allow read: if isOwner(userId);
+      // Read own profile or admin read.
+      allow read: if isOwner(userId) || isAdmin();
 
+      // Create own profile only.
       allow create: if isOwner(userId)
         && validUserProfile(userId);
 
-      // Users may update only their name and phone.
-      // UID, email, role and createdAt remain protected.
-      allow update: if isOwner(userId)
-        &&
-        request.resource.data.diff(resource.data)
-          .affectedKeys()
-          .hasOnly(['fullName', 'phone'])
-        &&
-        request.resource.data.fullName is string
-        &&
-        request.resource.data.fullName.size() > 0
-        &&
-        request.resource.data.fullName.size() <= 100
-        &&
-        request.resource.data.phone is string
-        &&
-        request.resource.data.phone.size() <= 20;
+      // Update only name and phone.
+      allow update: if (
+        isOwner(userId) || isAdmin()
+      )
+      &&
+      request.resource.data.keys().hasAll([
+        'uid',
+        'fullName',
+        'email',
+        'phone',
+        'role',
+        'createdAt'
+      ])
+      &&
+      request.resource.data.diff(resource.data)
+        .affectedKeys()
+        .hasOnly(['fullName', 'phone'])
+      &&
+      request.resource.data.fullName is string
+      &&
+      request.resource.data.fullName.size() > 0
+      &&
+      request.resource.data.fullName.size() <= 100
+      &&
+      request.resource.data.phone is string
+      &&
+      request.resource.data.phone.size() > 0
+      &&
+      request.resource.data.phone.size() <= 20;
 
+      // No profile deletion.
       allow delete: if false;
     }
 
-    // BOOKINGS
+
+    // =====================================
+    // 5. BOOKINGS COLLECTION
+    // =====================================
+
     match /bookings/{bookingId} {
 
-      // Users can read only their own bookings.
-      allow read: if isSignedIn()
-        && resource.data.uid == request.auth.uid;
+      // User reads own bookings.
+      // Admin reads all bookings.
+      allow read: if isAdmin()
+        ||
+        (
+          isSignedIn()
+          && resource.data.uid == request.auth.uid
+        );
 
-      // Users can create bookings for themselves.
+      // Create own booking only.
       allow create: if isSignedIn()
         && validBooking();
 
-      // Booking updates and deletion are disabled.
-      allow update, delete: if false;
+      // Only admin can update booking status.
+      allow update: if isAdmin()
+        &&
+        request.resource.data.diff(resource.data)
+          .affectedKeys()
+          .hasOnly(['status'])
+        &&
+        (
+          request.resource.data.status == 'Pending'
+          ||
+          request.resource.data.status == 'Approved'
+          ||
+          request.resource.data.status == 'Rejected'
+          ||
+          request.resource.data.status == 'Cancelled'
+        );
+
+      // No booking deletion.
+      allow delete: if false;
     }
 
-    // DENY EVERYTHING ELSE
+
+    // =====================================
+    // 6. DEFAULT SECURITY
+    // =====================================
+
     match /{document=**} {
       allow read, write: if false;
     }
+
   }
 }
