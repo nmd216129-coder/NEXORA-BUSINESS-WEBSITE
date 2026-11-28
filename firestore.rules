@@ -4,231 +4,173 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ==============================
-    // AUTHENTICATION & ADMIN
-    // ==============================
-
     function isSignedIn() {
       return request.auth != null;
     }
 
-    function isAdmin() {
-      return isSignedIn()
-        && request.auth.token.admin == true;
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
     }
 
-    function isOwner(userId) {
-      return isSignedIn()
-        && request.auth.uid == userId;
+    // USER PROFILE VALIDATION
+    function validUserProfile(userId) {
+      return request.resource.data.keys().hasAll([
+        'uid',
+        'fullName',
+        'email',
+        'phone',
+        'role',
+        'createdAt'
+      ])
+      &&
+      request.resource.data.keys().hasOnly([
+        'uid',
+        'fullName',
+        'email',
+        'phone',
+        'role',
+        'createdAt'
+      ])
+      &&
+      request.resource.data.uid == userId
+      &&
+      request.resource.data.fullName is string
+      &&
+      request.resource.data.fullName.size() > 0
+      &&
+      request.resource.data.fullName.size() <= 100
+      &&
+      request.resource.data.email == request.auth.token.email
+      &&
+      request.resource.data.phone is string
+      &&
+      request.resource.data.phone.size() <= 20
+      &&
+      request.resource.data.role == 'user'
+      &&
+      request.resource.data.createdAt == request.time;
     }
 
+    // BOOKING VALIDATION
+    function validBooking() {
+      return request.resource.data.keys().hasAll([
+        'uid',
+        'clientName',
+        'clientEmail',
+        'clientPhone',
+        'service',
+        'date',
+        'time',
+        'notes',
+        'status',
+        'createdAt'
+      ])
+      &&
+      request.resource.data.keys().hasOnly([
+        'uid',
+        'clientName',
+        'clientEmail',
+        'clientPhone',
+        'service',
+        'date',
+        'time',
+        'notes',
+        'status',
+        'createdAt'
+      ])
+      &&
+      request.resource.data.uid == request.auth.uid
+      &&
+      request.resource.data.clientName is string
+      &&
+      request.resource.data.clientName.size() > 0
+      &&
+      request.resource.data.clientName.size() <= 100
+      &&
+      request.resource.data.clientEmail is string
+      &&
+      request.resource.data.clientEmail == request.auth.token.email
+      &&
+      request.resource.data.clientPhone is string
+      &&
+      request.resource.data.clientPhone.size() > 0
+      &&
+      request.resource.data.clientPhone.size() <= 20
+      &&
+      request.resource.data.service in [
+        'Business Consultation',
+        'Website Development',
+        'Project Discussion',
+        'Technical Support',
+        'Other Service'
+      ]
+      &&
+      request.resource.data.date is string
+      &&
+      request.resource.data.date.matches(
+        '^\\d{4}-\\d{2}-\\d{2}$'
+      )
+      &&
+      request.resource.data.time is string
+      &&
+      request.resource.data.time.matches(
+        '^([01]\\d|2[0-3]):[0-5]\\d$'
+      )
+      &&
+      request.resource.data.notes is string
+      &&
+      request.resource.data.notes.size() <= 1000
+      &&
+      request.resource.data.status == 'Pending'
+      &&
+      request.resource.data.createdAt == request.time;
+    }
 
-    // ==============================
-    // USERS
-    // ==============================
-
+    // USER PROFILES
     match /users/{userId} {
 
+      allow read: if isOwner(userId);
+
       allow create: if isOwner(userId)
-        && request.resource.data.keys().hasOnly([
-          "uid",
-          "fullName",
-          "email",
-          "phone",
-          "role",
-          "createdAt"
-        ])
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.fullName is string
-        && request.resource.data.fullName.size() >= 2
-        && request.resource.data.fullName.size() <= 80
-        && request.resource.data.email is string
-        && request.resource.data.email == request.auth.token.email
-        && request.resource.data.phone is string
-        && request.resource.data.phone.size() >= 7
-        && request.resource.data.phone.size() <= 20
-        && request.resource.data.role == "user"
-        && request.resource.data.createdAt is timestamp;
+        && validUserProfile(userId);
 
-      allow read: if isOwner(userId) || isAdmin();
-
+      // Users may update only their name and phone.
+      // UID, email, role and createdAt remain protected.
       allow update: if isOwner(userId)
-        && request.resource.data.uid == resource.data.uid
-        && request.resource.data.email == resource.data.email
-        && request.resource.data.role == resource.data.role
-        && request.resource.data.createdAt == resource.data.createdAt
-        && request.resource.data.diff(resource.data)
+        &&
+        request.resource.data.diff(resource.data)
           .affectedKeys()
-          .hasOnly(["fullName", "phone"])
-        && request.resource.data.fullName is string
-        && request.resource.data.fullName.size() >= 2
-        && request.resource.data.fullName.size() <= 80
-        && request.resource.data.phone is string
-        && request.resource.data.phone.size() >= 7
-        && request.resource.data.phone.size() <= 20;
+          .hasOnly(['fullName', 'phone'])
+        &&
+        request.resource.data.fullName is string
+        &&
+        request.resource.data.fullName.size() > 0
+        &&
+        request.resource.data.fullName.size() <= 100
+        &&
+        request.resource.data.phone is string
+        &&
+        request.resource.data.phone.size() <= 20;
 
-      allow delete: if isAdmin();
+      allow delete: if false;
     }
 
-
-    // ==============================
     // BOOKINGS
-    // ==============================
-
     match /bookings/{bookingId} {
 
+      // Users can read only their own bookings.
+      allow read: if isSignedIn()
+        && resource.data.uid == request.auth.uid;
+
+      // Users can create bookings for themselves.
       allow create: if isSignedIn()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.status == "pending"
-        && request.resource.data.createdAt is timestamp;
+        && validBooking();
 
-      allow read: if isAdmin()
-        || (
-          isSignedIn()
-          && resource.data.userId == request.auth.uid
-        );
-
-      // Only Admin can update or delete bookings
-      allow update, delete: if isAdmin();
+      // Booking updates and deletion are disabled.
+      allow update, delete: if false;
     }
 
-
-    // ==============================
-    // MEETINGS
-    // ==============================
-
-    match /meetings/{meetingId} {
-
-      allow create: if isSignedIn()
-        && request.resource.data.createdBy == request.auth.uid
-        && request.resource.data.participantUids is list
-        && request.resource.data.participantUids.size() <= 50
-        && request.resource.data.participantUids.hasAny([
-          request.auth.uid
-        ])
-        && request.resource.data.createdAt is timestamp;
-
-      allow read: if isAdmin()
-        || (
-          isSignedIn()
-          && resource.data.participantUids is list
-          && resource.data.participantUids.hasAny([
-            request.auth.uid
-          ])
-        );
-
-      allow update: if isAdmin()
-        || (
-          isSignedIn()
-          && resource.data.createdBy == request.auth.uid
-          && request.resource.data.createdBy == resource.data.createdBy
-          && request.resource.data.participantUids
-            == resource.data.participantUids
-        );
-
-      allow delete: if isAdmin();
-    }
-
-
-    // ==============================
-    // CHATS
-    // ==============================
-
-    match /chats/{chatId} {
-
-      allow create: if isSignedIn()
-        && request.resource.data.participantUids is list
-        && request.resource.data.participantUids.size() >= 2
-        && request.resource.data.participantUids.size() <= 20
-        && request.resource.data.participantUids.hasAny([
-          request.auth.uid
-        ]);
-
-      allow read: if isAdmin()
-        || (
-          isSignedIn()
-          && resource.data.participantUids is list
-          && resource.data.participantUids.hasAny([
-            request.auth.uid
-          ])
-        );
-
-      allow update, delete: if isAdmin();
-
-      // Chat messages
-      match /messages/{messageId} {
-
-        function isChatParticipant() {
-          return isSignedIn()
-            && get(
-              /databases/$(database)/documents/chats/$(chatId)
-            ).data.participantUids.hasAny([
-              request.auth.uid
-            ]);
-        }
-
-        allow read: if isAdmin() || isChatParticipant();
-
-        allow create: if isChatParticipant()
-          && request.resource.data.senderId == request.auth.uid
-          && request.resource.data.text is string
-          && request.resource.data.text.size() > 0
-          && request.resource.data.text.size() <= 5000
-          && request.resource.data.createdAt is timestamp;
-
-        allow update, delete: if isAdmin();
-      }
-    }
-
-
-    // ==============================
-    // EMPLOYEES
-    // ==============================
-
-    match /employees/{employeeId} {
-
-      allow read, write: if isAdmin();
-    }
-
-
-    // ==============================
-    // CLIENTS
-    // ==============================
-
-    match /clients/{clientId} {
-
-      allow read, write: if isAdmin();
-    }
-
-
-    // ==============================
-    // NOTIFICATIONS
-    // ==============================
-
-    match /notifications/{notificationId} {
-
-      allow create: if isAdmin();
-
-      allow read: if isAdmin()
-        || (
-          isSignedIn()
-          && resource.data.recipientId == request.auth.uid
-        );
-
-      allow update: if isSignedIn()
-        && resource.data.recipientId == request.auth.uid
-        && request.resource.data.diff(resource.data)
-          .affectedKeys()
-          .hasOnly(["read"]);
-
-      allow delete: if isAdmin();
-    }
-
-
-    // ==============================
-    // DENY ALL OTHER COLLECTIONS
-    // ==============================
-
+    // DENY EVERYTHING ELSE
     match /{document=**} {
       allow read, write: if false;
     }
